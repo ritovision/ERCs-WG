@@ -40,8 +40,20 @@ automatically merged:
 
 ### Building Locally
 
-It is possible to run the above checks and preview how proposals will render
-using [`build-eips`]. See its documentation for more details.
+The easiest local workspace setup path in this repo is:
+
+```bash
+./scripts/dev-setup
+just serve
+```
+
+`./scripts/dev-setup` locates or installs `build-eips` and `just`, runs
+`workspace init`, refreshes the generated `justfile`, and prints the next
+useful commands.
+
+For the canonical multi-repo workflow, manual `build-eips` commands, and the
+generated `just` task surface, see the `build-eips` guide in
+[`eips-wg/preprocessor`](https://github.com/eips-wg/preprocessor#local-workspace-workflow).
 
 ## Preferred Citation Format
 
