@@ -40,20 +40,23 @@ automatically merged:
 
 ### Building Locally
 
-The easiest local workspace setup path in this repo is:
+The retained local bootstrap path in this repo is:
 
 ```bash
 ./scripts/dev-setup
-just serve
+build-eips serve
 ```
 
-`./scripts/dev-setup` locates or installs `build-eips` and `just`, runs
-`workspace init`, refreshes the generated `justfile`, and prints the next
-useful commands.
+`./scripts/dev-setup` locates or installs `build-eips`, runs
+`build-eips -C <repo> workspace init <workspace-root>`, runs
+`build-eips -C <repo> workspace doctor`, and prints the next direct
+`build-eips` commands for this repo.
 
-For the canonical multi-repo workflow, manual `build-eips` commands, and the
-generated `just` task surface, see the `build-eips` guide in
-[`eips-wg/preprocessor`](https://github.com/eips-wg/preprocessor#local-workspace-workflow).
+For the current multi-repo bootstrap and direct command surface, see
+[`Workspace Bootstrap`](https://github.com/eips-wg/preprocessor#workspace-bootstrap),
+[`Profiles And Overrides`](https://github.com/eips-wg/preprocessor#profiles-and-overrides),
+and [`Dirty Mode`](https://github.com/eips-wg/preprocessor#dirty-mode) in
+[`eips-wg/preprocessor`](https://github.com/eips-wg/preprocessor).
 
 ## Preferred Citation Format
 
