@@ -11,6 +11,9 @@ extra:
     - href: https://discord.gg/mRzPXmmYEA
       image: https://dcbadge.limes.pink/api/server/mRzPXmmYEA?style=flat
       alt: Badge for Ethereum Wallets Discord channel
+    - href: https://discord.gg/9FxN6CfaQR
+      image: https://dcbadge.limes.pink/api/server/9FxN6CfaQR?style=flat
+      alt: Badge for ERCRef Discord channel
     - href: ./atom.xml
       image: https://img.shields.io/badge/rss-Everything-red.svg
       alt: RSS feed for everything
