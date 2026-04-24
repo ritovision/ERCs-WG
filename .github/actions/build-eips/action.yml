@@ -24,13 +24,16 @@ runs:
         id: install-build-eips
         shell: bash
         run: |
+          set -euf -o pipefail
+          BUILD_EIPS_REV=30e2c7602d75b17cd725bd3fd56f580062957abe
           WHERE="$(mktemp -d)"
-          (
-            cd "$WHERE";
-            wget https://github.com/eips-wg/preprocessor/releases/latest/download/build-eips-ubuntu.tar.xz;
-            tar xvf build-eips-ubuntu.tar.xz;
-          )
-          echo "bin=$WHERE/build-eips" >> "$GITHUB_OUTPUT"
+          cargo install \
+            --git https://github.com/eips-wg/preprocessor.git \
+            --rev "$BUILD_EIPS_REV" \
+            --locked \
+            --root "$WHERE" \
+            --bin build-eips
+          echo "bin=$WHERE/bin/build-eips" >> "$GITHUB_OUTPUT"
 
       - name: Install Zola
         shell: bash

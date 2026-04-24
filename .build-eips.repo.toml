@@ -1,0 +1,17 @@
+repo_id = "ERCs"
+
+[production]
+repository = "https://github.com/ethereum/ERCs.git"
+base_url = "https://ercs.ethereum.org/"
+
+[staging]
+repository = "https://github.com/eips-wg/ERCs.git"
+base_url = "https://eips-wg.github.io/ERCs/"
+
+[siblings.EIPs.production]
+repository = "https://github.com/ethereum/EIPs.git"
+base_url = "https://eips.ethereum.org/"
+
+[siblings.EIPs.staging]
+repository = "https://github.com/eips-wg/EIPs.git"
+base_url = "https://eips-wg.github.io/EIPs/"
