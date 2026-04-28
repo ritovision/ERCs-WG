@@ -151,7 +151,7 @@ else
 fi
 
 say "Bootstrapping workspace at $WORKSPACE_ROOT"
-"$BUILD_EIPS" -C "$REPO_ROOT" workspace init "$WORKSPACE_ROOT"
+"$BUILD_EIPS" -C "$REPO_ROOT" workspace init "$WORKSPACE_ROOT" --template --platform-dev
 
 say "Running workspace doctor"
 if ! "$BUILD_EIPS" -C "$REPO_ROOT" workspace doctor; then
