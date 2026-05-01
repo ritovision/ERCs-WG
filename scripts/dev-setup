@@ -528,13 +528,13 @@ say "Active proposal repo: $REPO_ROOT"
 say "Workspace root: $WORKSPACE_ROOT"
 
 say "Bootstrapping workspace at $WORKSPACE_ROOT"
-if ! "$BUILD_EIPS" -C "$REPO_ROOT" workspace init "$WORKSPACE_ROOT" --template --platform-dev; then
-    die "workspace init failed"
+if ! "$BUILD_EIPS" -C "$REPO_ROOT" init "$WORKSPACE_ROOT" --template --platform-dev; then
+    die "build-eips init failed"
 fi
 
-say "Running workspace doctor"
-if ! "$BUILD_EIPS" -C "$REPO_ROOT" workspace doctor; then
-    say "Warning: workspace doctor reported issues above. Fix them before relying on direct build-eips commands."
+say "Running build-eips doctor"
+if ! "$BUILD_EIPS" -C "$REPO_ROOT" doctor; then
+    say "Warning: build-eips doctor reported issues above. Fix them before relying on direct build-eips commands."
 fi
 
 WORKSPACE_DOC=$WORKSPACE_ROOT/WORKSPACE.md
@@ -542,7 +542,7 @@ say ""
 if [ -f "$WORKSPACE_DOC" ]; then
     say "Workspace docs: $WORKSPACE_DOC (../WORKSPACE.md from this repo)"
 else
-    say "Warning: workspace docs were not found at $WORKSPACE_DOC after workspace init"
+    say "Warning: workspace docs were not found at $WORKSPACE_DOC after build-eips init"
 fi
 
 if [ -n "$PATH_NOTES" ]; then
@@ -566,4 +566,4 @@ say "Next commands:"
 say "  cd $(shell_quote "$REPO_ROOT")"
 say "  build-eips serve"
 say "  build-eips check"
-say "  build-eips workspace doctor"
+say "  build-eips doctor"

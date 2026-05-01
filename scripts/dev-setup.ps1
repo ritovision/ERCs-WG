@@ -479,17 +479,17 @@ Say "If PowerShell blocks this script, run:"
 Say "  powershell -ExecutionPolicy Bypass -File .\scripts\dev-setup.ps1"
 
 Say "Bootstrapping workspace at $WorkspaceRoot"
-& $BuildEipsPath -C $RepoRoot workspace init $WorkspaceRoot --template --platform-dev
+& $BuildEipsPath -C $RepoRoot init $WorkspaceRoot --template --platform-dev
 $WorkspaceInitExitCode = $LASTEXITCODE
 if ($WorkspaceInitExitCode -ne 0) {
-    Die "workspace init failed with exit code $WorkspaceInitExitCode"
+    Die "build-eips init failed with exit code $WorkspaceInitExitCode"
 }
 
-Say "Running workspace doctor"
-& $BuildEipsPath -C $RepoRoot workspace doctor
+Say "Running build-eips doctor"
+& $BuildEipsPath -C $RepoRoot doctor
 $WorkspaceDoctorExitCode = $LASTEXITCODE
 if ($WorkspaceDoctorExitCode -ne 0) {
-    Say "Warning: workspace doctor reported issues above. Fix them before relying on direct build-eips commands."
+    Say "Warning: build-eips doctor reported issues above. Fix them before relying on direct build-eips commands."
 }
 
 $WorkspaceDocPath = Join-Path -Path $WorkspaceRoot -ChildPath "WORKSPACE.md"
@@ -497,7 +497,7 @@ Say ""
 if (Test-Path -LiteralPath $WorkspaceDocPath -PathType Leaf) {
     Say "Workspace docs: $WorkspaceDocPath (../WORKSPACE.md from this repo)"
 } else {
-    Say "Warning: workspace docs were not found at $WorkspaceDocPath after workspace init"
+    Say "Warning: workspace docs were not found at $WorkspaceDocPath after build-eips init"
 }
 
 if ($PathNotes.Count -gt 0) {
@@ -514,4 +514,4 @@ Say "Next commands:"
 Say ("  cd {0}" -f (ConvertTo-PowerShellQuotedPath -Path $RepoRoot))
 Say "  build-eips serve"
 Say "  build-eips check"
-Say "  build-eips workspace doctor"
+Say "  build-eips doctor"

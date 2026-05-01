@@ -32,7 +32,7 @@ The ERCs repo uses the shared `build-eips` multi-repo workspace for local site b
 * include tracked local edits without committing them first
 * render only selected proposals to save time when a full site build is unnecessary
 * run targeted `eipw` editorial checks for proposals before opening or updating pull requests
-* diagnose missing workspace pieces with `workspace doctor`
+* diagnose missing workspace pieces with `build-eips doctor`
 
 Run the commands below from this ERCs repo. From the workspace root, use `-C ERCs` before the command.
 
@@ -62,7 +62,7 @@ Windows PowerShell:
 .\scripts\dev-setup.ps1
 ```
 
-The setup script initializes the workspace one directory above this repo, runs `workspace doctor`, and prints the next local commands.
+The setup script initializes the workspace one directory above this repo, runs `build-eips doctor`, and prints the next local commands.
 
 After setup, the generated workspace guide is available at `../WORKSPACE.md`. Use that file for the full command reference and workspace details.
 
@@ -86,7 +86,7 @@ Use the main site commands from this repo:
 build-eips serve
 build-eips check
 build-eips build
-build-eips workspace doctor
+build-eips doctor
 ```
 
 By default, `build`, `serve`, and `check` use the local workspace in dirty mode, which includes tracked working-tree edits from this repo. Use `--clean` when you want to ignore tracked local proposal edits for one command:
@@ -127,7 +127,7 @@ CLI `--only` replaces `[render].only` for that run. For edge cases and exact fil
 
 Use editorial commands when you want targeted `eipw` validation before opening or updating a pull request.
 
-Both `editorial lint` and `editorial build` take the same selector modes:
+Both `editorial lint` and `editorial check` take the same selector modes:
 
 * proposal numbers or repo-relative proposal paths for explicit targets
 * `--working-tree` for tracked dirty proposal files
@@ -144,12 +144,12 @@ build-eips editorial lint --working-tree
 build-eips editorial lint --against-upstream --format github
 ```
 
-`editorial build` runs targeted editorial validation first, then reuses the local `check` path:
+`editorial check` runs targeted editorial validation first, then reuses the local `check` path:
 
 ```bash
-build-eips editorial build 1
-build-eips editorial build --working-tree
-build-eips editorial build --against-upstream --format github
+build-eips editorial check 1
+build-eips editorial check --working-tree
+build-eips editorial check --against-upstream --format github
 ```
 
 Use a batch file when you want to lint or build-check the same proposal set repeatedly. A batch file is a plain text file with one proposal number or repo-relative proposal path per line:
@@ -162,7 +162,7 @@ content/07950.md
 
 ```bash
 build-eips editorial lint --batch ../editor-batch.txt
-build-eips editorial build --batch ../editor-batch.txt
+build-eips editorial check --batch ../editor-batch.txt
 ```
 
 ### Full Workspace Reference
