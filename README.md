@@ -23,15 +23,18 @@ All pull requests in this repository must pass checks before they can be automat
 - [eip-review-bot] determines when PRs can be automatically merged [^1]
 - EIP-1 rules are enforced using [`eipw`] [^2]
 - Markdown best practices are checked using [markdownlint] [^2]
+- `build-eips` runs targeted proposal validation and site checks for changed proposal files [^2]
 
-## Local Development
+Before opening or updating a pull request, run the same CI-style command locally as described in [Editorial Validation](#editorial-validation): `build-eips --staging editorial check --against-upstream --format github`.
+
+## Local Workflows
 
 The ERCs repo uses the shared `build-eips` multi-repo workspace for local site builds, live previews, and editorial validation. The setup script bootstraps the surrounding workspace so, with just a few commands, you can:
 
+* run targeted `eipw` editorial checks for proposals before opening or updating pull requests
 * build and serve the ERCs site with the local theme repo and sibling proposal repos like EIPs
 * include tracked local edits without committing them first
 * render only selected proposals to save time when a full site build is unnecessary
-* run targeted `eipw` editorial checks for proposals before opening or updating pull requests
 * diagnose missing workspace pieces with `build-eips doctor`
 
 Run the commands below from this ERCs repo. From the workspace root, use `-C ERCs` before the command.
@@ -80,16 +83,30 @@ EIPs-project/
 
 ### Build And Serve Locally
 
-Use the main site commands from this repo:
+Build the full static site, then preview that built output:
+
+```bash
+build-eips build
+build-eips preview
+```
+
+`preview` serves the last output written by `build`. Run `build` again before `preview` when you want to inspect fresh output.
+
+Use `serve` when you want a live development server that livereloads changes instead of a reusable build output:
 
 ```bash
 build-eips serve
-build-eips check
-build-eips build
-build-eips doctor
 ```
 
-By default, `build`, `serve`, and `check` use the local workspace in dirty mode, which includes tracked working-tree edits from this repo. Use `--clean` when you want to ignore tracked local proposal edits for one command:
+`serve` runs a fresh temporary site build each time it is invoked (without using `build`), starts a local development server, and watches tracked local edits. Its output cannot be reused by `preview`.
+
+Use `check` to quickly validate whether the site will build cleanly without producing the full built site:
+
+```bash
+build-eips check
+```
+
+By default, `check`, `build`, and `serve` use the local workspace in dirty mode, which includes tracked working-tree edits from this repo. `preview` serves the last output written by `build`. Use `--clean` when you want to ignore tracked local proposal edits for one command:
 
 ```bash
 build-eips check --clean
@@ -97,16 +114,41 @@ build-eips build --clean
 build-eips serve --clean
 ```
 
-From the workspace root, run the same commands with `-C ERCs`:
+For staging, production, parity, and remote-sibling modes, see `../WORKSPACE.md`.
 
-```bash
-build-eips -C ERCs serve
-build-eips -C ERCs check
+### Local Settings
+
+Local build settings live in `../.build-eips.toml`, which the setup script generates. Use that workspace file to change the local server address or local site URL:
+
+```toml
+[server]
+host = "127.0.0.1"
+port = 1111
+
+[site]
+base_url = "http://127.0.0.1:1111"
 ```
 
-### Target Specific Proposals
+`serve` and `preview` use `[server]` for the local bind address. `build` and `serve` use `[site].base_url` when generating links.
 
-Full local `build` and `serve` runs can take time because they process every proposal file. Use targeted rendering when you only need to test a few proposals or theme changes against a small proposal set:
+CLI flags such as `--host`, `--port`, and `--base-url` override the workspace config for one run:
+
+```bash
+build-eips serve --host 0.0.0.0 --port 3000 --base-url http://127.0.0.1:3000
+```
+
+### Render Specific Proposals Only
+
+Full local `build` and `serve` runs can take time because they process every proposal file. When you want to quickly test a single proposal or a specific batch, add a list of desired proposal numbers to the workspace `.build-eips.toml`:
+
+```toml
+[render]
+only = [555, 678]
+```
+
+Add one or more proposal numbers in `[render].only`, separated by commas. It's empty by default, but whenever it is populated, the regular `build` and `serve` commands render only those proposal pages. Links and references to excluded proposals are rewritten to the canonical public site.
+
+Use CLI `--only` when you want a one-run target list; it also overrides any proposals in `[render].only` for that run:
 
 ```bash
 build-eips serve --only 555
@@ -114,20 +156,29 @@ build-eips build --only 555
 build-eips build --only 555 678
 ```
 
-You can also set a default target list in the workspace `.build-eips.toml`:
-
-```toml
-[render]
-only = [555, 678]
-```
-
-CLI `--only` replaces `[render].only` for that run. For edge cases and exact filtering behavior, see `../WORKSPACE.md`.
+Multiple proposal numbers in the CLI are space-separated; no commas.
 
 ### Editorial Validation
 
-Use editorial commands when you want targeted `eipw` validation before opening or updating a pull request.
+Use editorial commands to validate proposal files before opening or updating a pull request.
 
-Both `editorial lint` and `editorial check` take the same selector modes:
+- `editorial lint` runs targeted `eipw` proposal-rule checks.
+- `editorial check` runs `editorial lint`, then checks that the selected proposal changes will not prevent the full site from building cleanly.
+
+Check one or more specific proposals by number:
+
+```bash
+build-eips editorial check 1
+build-eips editorial check 1 123
+```
+
+For the closest match to PR CI, use `editorial check` against the proposal files changed versus upstream:
+
+```bash
+build-eips --staging editorial check --against-upstream --format github
+```
+
+Both commands accept the same selector modes:
 
 * proposal numbers or repo-relative proposal paths for explicit targets
 * `--working-tree` for tracked dirty proposal files
@@ -136,28 +187,11 @@ Both `editorial lint` and `editorial check` take the same selector modes:
 
 They also accept `eipw` options such as `--format github`.
 
-`editorial lint` runs targeted editorial validation:
-
-```bash
-build-eips editorial lint 1
-build-eips editorial lint --working-tree
-build-eips editorial lint --against-upstream --format github
-```
-
-`editorial check` runs targeted editorial validation first, then reuses the local `check` path:
-
-```bash
-build-eips editorial check 1
-build-eips editorial check --working-tree
-build-eips editorial check --against-upstream --format github
-```
-
-Use a batch file when you want to lint or build-check the same proposal set repeatedly. A batch file is a plain text file with one proposal number or repo-relative proposal path per line:
+Use a batch file when you want to lint or check the same proposal set repeatedly. A batch file is a plain text file with one proposal number per line:
 
 ```txt
 1
 7949
-content/07950.md
 ```
 
 ```bash
@@ -167,11 +201,7 @@ build-eips editorial check --batch ../editor-batch.txt
 
 ### Full Workspace Reference
 
-For local server settings, `preview`, remote staging/production commands, parity commands, source overrides, side-by-side build roots, and detailed dirty-mode behavior, use the generated workspace guide:
-
-```bash
-../WORKSPACE.md
-```
+For remote staging/production commands, parity commands, source overrides, side-by-side build roots, and detailed dirty-mode behavior, use the generated workspace guide at `../WORKSPACE.md`.
 
 ## Preferred Citation Format
 
