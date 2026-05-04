@@ -1,14 +1,28 @@
 ---
 title: Home
+extra:
+  homepage_badges:
+    - href: https://discord.gg/Nz6rtfJ8Cu
+      image: https://dcbadge.limes.pink/api/server/Nz6rtfJ8Cu?style=flat
+      alt: Badge for EIP Editor Discord channel
+    - href: https://discord.gg/EVTQ9crVgQ
+      image: https://dcbadge.limes.pink/api/server/EVTQ9crVgQ?style=flat
+      alt: Badge for Ethereum R&D Discord channel
+    - href: https://discord.gg/mRzPXmmYEA
+      image: https://dcbadge.limes.pink/api/server/mRzPXmmYEA?style=flat
+      alt: Badge for Ethereum Wallets Discord channel
+    - href: https://discord.gg/9FxN6CfaQR
+      image: https://dcbadge.limes.pink/api/server/9FxN6CfaQR?style=flat
+      alt: Badge for ERCRef Discord channel
+    - href: ./atom.xml
+      image: https://img.shields.io/badge/rss-Everything-red.svg
+      alt: RSS feed for everything
+    - href: ./status/last-call/atom.xml
+      image: https://img.shields.io/badge/rss-Last%20Calls-red.svg
+      alt: RSS feed for last calls
 ---
 
 # EIPs & ERCs
-
-[![Badge for EIP Editor Discord channel][badge-discord-ech]][discord-ech]
-[![Badge for Ethereum R&D Discord channel][badge-discord-rd]][discord-rd]
-[![Badge for Ethereum Wallets Discord channel][badge-discord-wallet]][discord-wallet]
-[![RSS Feed for Everything][badge-rss-all]][rss-all]
-[![RSS Feed for Last Call][badge-rss-last-call]][rss-last-call]
 
 <!-- TODO: Recreate email alerts -->
 
@@ -106,22 +120,6 @@ information to the Ethereum community, but does not propose a new feature.
 Informational EIPs do not necessarily represent Ethereum community consensus or
 a recommendation, so users and implementers are free to ignore Informational
 EIPs or follow their advice.
-
-
-[discord-ech]: https://discord.gg/Nz6rtfJ8Cu
-[badge-discord-ech]: https://dcbadge.limes.pink/api/server/Nz6rtfJ8Cu?style=flat
-
-[discord-rd]: https://discord.gg/EVTQ9crVgQ
-[badge-discord-rd]: https://dcbadge.limes.pink/api/server/EVTQ9crVgQ?style=flat
-
-[discord-wallet]: https://discord.gg/mRzPXmmYEA
-[badge-discord-wallet]: https://dcbadge.limes.pink/api/server/mRzPXmmYEA?style=flat
-
-[rss-all]: ./atom.xml
-[badge-rss-all]: https://img.shields.io/badge/rss-Everything-red.svg
-
-[rss-last-call]: ./status/last-call/atom.xml
-[badge-rss-last-call]: https://img.shields.io/badge/rss-Last%20Calls-red.svg
 
 [ethpm]: https://github.com/ethereum/pm/
 

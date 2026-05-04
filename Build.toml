@@ -1,0 +1,13 @@
+name = "ERCs"
+
+[locations.ERCs]
+repository = "https://github.com/eips-wg/ERCs.git"
+base-url = "https://eips-wg.github.io/ERCs/"
+
+[locations.EIPs]
+repository = "https://github.com/eips-wg/EIPs.git"
+base-url = "https://eips-wg.github.io/EIPs/"
+
+[theme]
+repository = "https://github.com/eips-wg/theme.git"
+commit = "0ddac35da36d311a8401c6cfb79c9991f78b647d"
