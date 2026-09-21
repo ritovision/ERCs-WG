@@ -4,7 +4,7 @@ This action no longer downloads `releases/latest` and invokes it in an uninitial
 
 ## Candidate revision and rollout decision
 
-The candidate now selects **`ritovision/eip-preprocessor` at `7b82223a0edd2d9d6a6cc93321eace776a9d0ec6`**, containing the bounded R01–R06 corrections, instead of the pre-correction audited tool. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `b4b3b96af9a8068ef39b65653ef9e05c9eac35e4`**, the already reviewed combination of both F06 optimizations. EIPs and ERCs use the same pair.
+The candidate now selects **`ritovision/eip-preprocessor` at `4db85eafaf8ce10cdbd73aa8c7f9284c75467b2d`**, containing the bounded R01–R06 corrections plus the G01 cross-platform path-collision guard, instead of the pre-correction audited tool. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `b4b3b96af9a8068ef39b65653ef9e05c9eac35e4`**, the already reviewed combination of both F06 optimizations. EIPs and ERCs use the same pair.
 
 These are exact candidate selectors, **not a claim that the commits have already been pushed, independently approved, or exercised in hosted Actions**. Before merging this consumer rollout, publish/approve the selected tool and theme commits in the indicated repositories (or promote repository/ref pairs together to their reviewed canonical counterparts), then run hosted Actions/Pages acceptance. Do not merge a selector whose object is unavailable. A missing selected object fails closed; branches, tags, `latest`, and old-version fallbacks are not used.
 
