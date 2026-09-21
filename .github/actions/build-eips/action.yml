@@ -1,66 +1,94 @@
-name: 'build-eips'
-
-description: 'Run the build-eips tool'
+name: build-eips
+description: Run an exact V2 tool revision in a fresh, explicit CI workspace
 
 inputs:
   args:
-    description: 'Command-line arguments to pass to build-eips'
+    description: Arguments for build, check, changed, or editorial (parsed without a shell)
     required: true
+  preprocessor-repository:
+    description: GitHub owner/repository containing the reviewed tool commit
+    # Candidate pin: promote repository/ref together when the reviewed V2 source
+    # is merged upstream. Never silently fall back to releases/latest.
+    default: ritovision/eip-preprocessor
+  preprocessor-ref:
+    description: Complete immutable commit ID of the tool to build and execute
+    default: a9e5b976bb64699b61ce45143d4cca6357eeeda2
 
 outputs:
   stdout:
-    description: 'Standard output from build-eips'
-    value: ${{ steps.run-build-eips.outputs.stdout }}
+    description: Standard output of the requested command only
+    value: ${{ steps.run.outputs.stdout }}
+  output-path:
+    description: Actual nonempty static output directory, set only after a successful build
+    value: ${{ steps.run.outputs.output-path }}
+  theme-path:
+    description: Theme checkout initialized at the active manifest pin
+    value: ${{ steps.run.outputs.theme-path }}
+  workspace-root:
+    description: Isolated CI workspace containing source/command evidence
+    value: ${{ steps.run.outputs.workspace-root }}
+  source-commit:
+    description: Exact input proposal commit tested by the command
+    value: ${{ steps.run.outputs.source-commit }}
 
 runs:
-  using: "composite"
+  using: composite
   steps:
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3
-        with:
-          shared-key: build-eips
+    - name: Fetch exact build-eips source
+      id: source
+      shell: bash
+      env:
+        TOOL_REPOSITORY: ${{ inputs.preprocessor-repository }}
+        TOOL_REVISION: ${{ inputs.preprocessor-ref }}
+      run: |
+        set -euo pipefail
+        python3 "$GITHUB_ACTION_PATH/ci.py" fetch-tool \
+          --repository "$TOOL_REPOSITORY" --revision "$TOOL_REVISION"
 
-      - name: Install build-eips
-        id: install-build-eips
-        shell: bash
-        run: |
-          WHERE="$(mktemp -d)"
-          (
-            cd "$WHERE";
-            wget https://github.com/eips-wg/preprocessor/releases/latest/download/build-eips-ubuntu.tar.xz;
-            tar xvf build-eips-ubuntu.tar.xz;
-          )
-          echo "bin=$WHERE/build-eips" >> "$GITHUB_OUTPUT"
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3
+      with:
+        shared-key: build-eips-v2
+        workspaces: ${{ steps.source.outputs.source }} -> target
 
-      - name: Install Zola
-        shell: bash
-        id: install-zola
-        run: |
-          set -euf -o pipefail
-          ZOLA_VERSION="v0.22.1"
-          ZOLA_DIGEST="0ca09aa40376aaa9ddfb512ff9ad963262ef95edb0d0f2d5ec6961b6f5cf22ef"
-          WHERE="$(mktemp -d)"
-          (
-            cd "$WHERE";
-            wget "https://github.com/getzola/zola/releases/download/${ZOLA_VERSION}/zola-${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz";
-            echo "${ZOLA_DIGEST}  zola-${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | sha256sum -c
-            tar xvf "zola-${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz";
-          )
-          echo "path=$WHERE" >> "$GITHUB_OUTPUT"
+    - name: Build reviewed tool
+      id: build-tool
+      shell: bash
+      env:
+        TOOL_SOURCE: ${{ steps.source.outputs.source }}
+      run: |
+        set -euo pipefail
+        command -v cargo >/dev/null || { echo 'The CI runner needs Cargo/Rust.' >&2; exit 1; }
+        CARGO_TARGET_DIR="$TOOL_SOURCE/target" cargo build --locked --release \
+          --manifest-path "$TOOL_SOURCE/Cargo.toml" --bin build-eips
+        echo "bin=$TOOL_SOURCE/target/release/build-eips" >> "$GITHUB_OUTPUT"
 
-      - name: Run build-eips
-        id: run-build-eips
-        shell: bash
-        env:
-          BUILD_EIPS_ARGS: ${{ inputs.args }}
-          BUILD_EIPS: ${{ steps.install-build-eips.outputs.bin }}
-          ZOLA_PATH: ${{ steps.install-zola.outputs.path }}
-        run: |
-          set -euf -o pipefail
-          write_eof() {
-            echo -e "\nEOF" >> "$GITHUB_OUTPUT"
-          }
-          echo "stdout<<EOF" >> "$GITHUB_OUTPUT"
-          trap write_eof EXIT
-          export PATH="${ZOLA_PATH}:${PATH}"
-          "$BUILD_EIPS" $BUILD_EIPS_ARGS | awk '{ print; if ($0 == "EOF") exit 1 }' | tee -a "$GITHUB_OUTPUT"
+    - name: Install checksum-verified Zola
+      id: zola
+      shell: bash
+      run: |
+        set -euo pipefail
+        ZOLA_VERSION=v0.22.1
+        ZOLA_DIGEST=0ca09aa40376aaa9ddfb512ff9ad963262ef95edb0d0f2d5ec6961b6f5cf22ef
+        WHERE="$(mktemp -d "$RUNNER_TEMP/build-eips-zola.XXXXXX")"
+        (
+          cd "$WHERE"
+          ARCHIVE="zola-${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          wget "https://github.com/getzola/zola/releases/download/${ZOLA_VERSION}/${ARCHIVE}"
+          printf '%s  %s\n' "$ZOLA_DIGEST" "$ARCHIVE" | sha256sum -c
+          tar xf "$ARCHIVE"
+        )
+        echo "path=$WHERE" >> "$GITHUB_OUTPUT"
+
+    - name: Prepare workspace and execute command
+      id: run
+      shell: bash
+      env:
+        BUILD_EIPS_ARGS: ${{ inputs.args }}
+        BUILD_EIPS: ${{ steps.build-tool.outputs.bin }}
+        ZOLA_PATH: ${{ steps.zola.outputs.path }}
+      run: |
+        set -euo pipefail
+        export PATH="${ZOLA_PATH}:$(dirname "$BUILD_EIPS"):${PATH}"
+        python3 "$GITHUB_ACTION_PATH/ci.py" run --repo "$GITHUB_WORKSPACE" \
+          --build-eips "$BUILD_EIPS" --args "$BUILD_EIPS_ARGS"

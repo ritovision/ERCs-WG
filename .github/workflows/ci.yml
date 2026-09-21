@@ -49,6 +49,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: EIPs Build (Check)
         uses: ./.github/actions/build-eips
@@ -64,6 +65,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Get Changed Files
         id: changed-files
@@ -71,16 +73,9 @@ jobs:
         with:
           args: changed
 
-      - name: Checkout (Config)
-        if: steps.changed-files.outputs.stdout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
-        with:
-          repository: eips-wg/theme
-          path: theme
-
       - name: Markdown Lint
         if: steps.changed-files.outputs.stdout
         uses: DavidAnson/markdownlint-cli2-action@05f32210e84442804257b2a6f20b273450ec8265 # 19.1.0
         with:
-          config: ./theme/config/config.markdownlint.yaml
+          config: ${{ steps.changed-files.outputs.theme-path }}/config/config.markdownlint.yaml
           globs: ${{ steps.changed-files.outputs.stdout }}

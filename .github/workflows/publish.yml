@@ -16,8 +16,10 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: EIPs Build (Build)
+        id: build-site
         uses: ./.github/actions/build-eips
         with:
           args: build
@@ -26,7 +28,7 @@ jobs:
         id: artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # 3.0.1
         with:
-          path: build/output
+          path: ${{ steps.build-site.outputs.output-path }}
 
   publish:
     if: github.repository_owner == 'ethereum' || github.repository_owner == 'eips-wg'
