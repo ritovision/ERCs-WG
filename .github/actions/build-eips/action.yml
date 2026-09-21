@@ -12,7 +12,7 @@ inputs:
     default: ritovision/eip-preprocessor
   preprocessor-ref:
     description: Complete immutable commit ID of the tool to build and execute
-    default: 4db85eafaf8ce10cdbd73aa8c7f9284c75467b2d
+    default: c763f390df49a754c5bacb04f0423ee7e78d1f85
 
 outputs:
   stdout:
