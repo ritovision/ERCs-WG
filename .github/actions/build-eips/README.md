@@ -4,7 +4,11 @@ This action no longer downloads `releases/latest` and invokes it in an uninitial
 
 ## Candidate revision and rollout decision
 
-The candidate defaults to `ritovision/eip-preprocessor` at `a9e5b976bb64699b61ce45143d4cca6357eeeda2`: the exact publicly available V2 commit audited before these corrections. This is a **pre-release test pin, not an assertion that the final corrected release is already published or approved**. Before canonical rollout, promote `preprocessor-repository` and `preprocessor-ref` together to the reviewed upstream/integrated commit. EIPs and ERCs should use the same reviewed tool revision. The complete 40-hex SHA is required; branches, tags, and `latest` are rejected. There is no fallback to an old released binary.
+The candidate now selects **`ritovision/eip-preprocessor` at `ce162f863f30e5c4ff5b68ddeac4040ee1ff1298`**, containing the bounded R01–R06 corrections, instead of the pre-correction audited tool. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `b4b3b96af9a8068ef39b65653ef9e05c9eac35e4`**, the already reviewed combination of both F06 optimizations. EIPs and ERCs use the same pair.
+
+These are exact candidate selectors, **not a claim that the commits have already been pushed, independently approved, or exercised in hosted Actions**. Before merging this consumer rollout, publish/approve the selected tool and theme commits in the indicated repositories (or promote repository/ref pairs together to their reviewed canonical counterparts), then run hosted Actions/Pages acceptance. Do not merge a selector whose object is unavailable. A missing selected object fails closed; branches, tags, `latest`, and old-version fallbacks are not used.
+
+The local selected-stack test reads these actual action/manifest selectors, fetches the exact tool commit, compiles its locked source, initializes the exact pinned theme and source/sibling heads, and runs both real full builds. Test-only URL rewrites point the declared remotes at local repositories; they do not edit project/global Git configuration and do not prove remote distribution or hosted permissions.
 
 Source-building is deliberate pre-release integration policy. Once an approved release exists, an independently reviewed checksum-verified immutable release installation path can replace it without changing the workspace contract.
 
@@ -29,3 +33,14 @@ python3 .github/actions/build-eips/test_contract.py \
 ```
 
 The test uses local Git fixture repositories and real Zola to cover build, check, no-change editorial check, nonempty changed-file stdout, real editorial-error annotations/exit propagation, failed-command exit/output behavior, exact source/pin selection, publication URLs, dirty-source exclusion, source/index preservation, immutable revision validation, and multiline output boundaries. Hosted Actions, release distribution, permissions, and actual Pages deployment are separate rollout acceptance—not consequences of a local pass.
+
+## Exact selected-stack acceptance (POSIX)
+
+```sh
+python3 .github/actions/build-eips/test_selected_stack.py \
+  --workspace /absolute/coordinated-workspace \
+  --evidence /absolute/new-evidence-directory \
+  --cargo-target /absolute/shared-cargo-target
+```
+
+This additional test requires PyYAML and uses a process-local home/Git configuration. It builds the selected source in the debug profile for local acceptance; the hosted release-profile build, GitHub triggers/permissions, artifact upload and Pages deployment remain separate rollout checks. Public URLs, source content and current pins are not rewritten inside the consuming manifests.

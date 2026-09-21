@@ -9,5 +9,5 @@ repository = "https://github.com/eips-wg/EIPs.git"
 base-url = "https://eips-wg.github.io/EIPs/"
 
 [theme]
-repository = "https://github.com/eips-wg/theme.git"
-commit = "0ddac35da36d311a8401c6cfb79c9991f78b647d"
+repository = "https://github.com/ritovision/eips-wg-theme.git"
+commit = "b4b3b96af9a8068ef39b65653ef9e05c9eac35e4"

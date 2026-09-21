@@ -7,12 +7,12 @@ inputs:
     required: true
   preprocessor-repository:
     description: GitHub owner/repository containing the reviewed tool commit
-    # Candidate pin: promote repository/ref together when the reviewed V2 source
-    # is merged upstream. Never silently fall back to releases/latest.
+    # Exact correction candidate: publish approved tool/theme commits before
+    # merging the consumer rollout. Never fall back to releases/latest.
     default: ritovision/eip-preprocessor
   preprocessor-ref:
     description: Complete immutable commit ID of the tool to build and execute
-    default: a9e5b976bb64699b61ce45143d4cca6357eeeda2
+    default: ce162f863f30e5c4ff5b68ddeac4040ee1ff1298
 
 outputs:
   stdout:
