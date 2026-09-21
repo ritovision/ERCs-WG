@@ -106,7 +106,7 @@ Use `check` to quickly validate whether the site will build cleanly without prod
 build-eips check
 ```
 
-By default, `check`, `build`, and `serve` use the local workspace in dirty mode, which includes tracked working-tree edits from this repo. `preview` serves the last output written by `build`. Use `--clean` when you want to ignore tracked local proposal edits for one command:
+By default, `check`, `build`, and `serve` use the local workspace in dirty mode, which includes tracked working-tree edits from this repo. `preview` serves the last output written by `build`. Use `--clean` to require a clean active proposal checkout before materialization; dirty or untracked active state is rejected. The editable local theme is still used:
 
 ```bash
 build-eips check --clean
@@ -131,10 +131,10 @@ base_url = "http://127.0.0.1:1111"
 
 `serve` and `preview` use `[server]` for the local bind address. `build` and `serve` use `[site].base_url` when generating links.
 
-CLI flags such as `--host`, `--port`, and `--base-url` override the workspace config for one run:
+CLI flags such as `--interface`, `--port`, and `--base-url` override the workspace config for one run:
 
 ```bash
-build-eips serve --host 0.0.0.0 --port 3000 --base-url http://127.0.0.1:3000
+build-eips serve --interface 0.0.0.0 --port 3000 --base-url http://127.0.0.1:3000
 ```
 
 ### Render Specific Proposals Only
