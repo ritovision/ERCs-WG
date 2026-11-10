@@ -40,6 +40,24 @@ def init(path):
     return commit(path)
 
 
+def complete_network_upgrade_sources(repo):
+    # build-eips derives network-upgrade data from a fixed registry of Meta
+    # source proposals and refuses incomplete inputs. Mirror its own
+    # tests/serve_generation.py fixture rather than weakening that validation.
+    def md(n, body, kind):
+        return (f'---\neip: {n}\ntitle: Fixture {n}\ndescription: Fixture {n}\nauthor: Fixture\n'
+                f'status: Draft\ntype: {kind}\ncreated: 2020-01-01\n---\n\n{body}\n')
+    legacy=[606,608,607,609,1013,1679,2387]
+    modern=[7773,8081,7569,7600,7607]
+    empty=[779,1716,7568]
+    members=[90099,2565,2929,2718,2930,1559,3198,3529,3541,3554,4345,5133,3675,4399,3651,3855,3860,4895,6049]
+    for n in members:
+        write(repo/'content'/f'{n:05}.md', md(n, 'Fixture member', 'Standards Track'))
+    for n in legacy+modern+empty:
+        body='### Included EIPs\n\n* [EIP-90099](./90099.md)\n' if n in legacy else ('### Included EIPs\n' if n in modern else '')
+        write(repo/'content'/f'{n:05}.md', md(n, body, 'Meta'))
+
+
 def outputs(path):
     lines=path.read_text().splitlines(); result={}; index=0
     while index < len(lines):
@@ -60,7 +78,7 @@ def main():
     runner=root/'runner';runner.mkdir()
     theme=root/'theme'
     write(theme/'theme.toml','name="CI contract"\n')
-    write(theme/'config/zola.toml','base_url="https://unused.invalid/"\ntheme="eips-theme"\ncompile_sass=false\nbuild_search_index=false\n')
+    write(theme/'config/zola.toml','base_url="https://unused.invalid/"\ntheme="eips-theme"\ncompile_sass=false\nbuild_search_index=false\ntaxonomies=[{name="status"},{name="type"},{name="category"}]\n')
     write(theme/'config/eipw.toml',f'schema-version="{SCHEMA}"\n[fetch]\nproposal-format="{{:05}}"\n[lints.preamble-file-name]\nformat="{{:05}}"\n')
     for template in ['index.html','section.html','page.html','eip.html']:
         write(theme/'templates'/template,'<html><link rel="canonical" href="{{ current_url }}">{{ page.content | default(value=section.content) | safe }}</html>')
@@ -70,15 +88,21 @@ def main():
         write(theme/'templates'/template,'<html><link rel="canonical" href="{{ current_url }}">{{ section.content | safe }}</html>')
     for template in ['page.html','eip.html']:
         write(theme/'templates'/template,'<html><link rel="canonical" href="{{ current_url }}">{{ page.content | safe }}</html>')
+    # Templates for the generated search, hardfork and proposal taxonomy routes.
+    for template in ['search.html','hardforks.html','taxonomy_list.html','taxonomy_single.html']:
+        write(theme/'templates'/template,'<html>Fixture</html>')
     write(theme/'config/config.markdownlint.yaml','default: false\n')
     pin=init(theme)
-    sibling=root/'ERCs';write(sibling/'content/00002.md','---\neip: 2\ntitle: Sibling\n---\nSIBLING\n');init(sibling)
+    # Fixture proposals carry the catalog-required status/type metadata; the
+    # rest of their preamble stays deliberately incomplete for editorial lint.
+    sibling=root/'ERCs';write(sibling/'content/00002.md','---\neip: 2\ntitle: Sibling\nstatus: Draft\ntype: Meta\n---\nSIBLING\n');init(sibling)
     active=root/'EIPs'
     def manifest():
         return f'name="EIPs"\n[locations.EIPs]\nrepository="{active.as_uri()}"\nbase-url="https://publish.example.test/EIPs/"\n[locations.ERCs]\nrepository="{sibling.as_uri()}"\nbase-url="https://publish.example.test/ERCs/"\n[theme]\nrepository="{theme.as_uri()}"\ncommit="{pin}"\n'
     write(active/'Build.toml',manifest())
+    complete_network_upgrade_sources(active)
     write(active/'content/_index.md','+++\ntitle="Home"\n+++\nHome\n')
-    write(active/'content/00001.md','---\neip: 1\ntitle: Active\n---\nCOMMITTED INPUT\n');head=init(active)
+    write(active/'content/00001.md','---\neip: 1\ntitle: Active\nstatus: Draft\ntype: Meta\n---\nCOMMITTED INPUT\n');head=init(active)
     # The adapter must use the exact committed snapshot, not local dirt.
     write(active/'content/00001.md','LOCAL DIRTY INPUT MUST NOT BE PUBLISHED')
     write(active/'content/00003.md','UNTRACKED MUST NOT BE PUBLISHED')
@@ -121,7 +145,7 @@ def main():
     cmd('git', '-C', active, 'restore', 'content/00001.md')
     (active/'content/00003.md').unlink()
     cmd('git', '-C', active, 'checkout', '--quiet', '--detach', head)
-    write(active/'content/00001.md', '---\neip: 1\ntitle: Active\n---\nCHANGED COMMITTED INPUT\n')
+    write(active/'content/00001.md', '---\neip: 1\ntitle: Active\nstatus: Draft\ntype: Meta\n---\nCHANGED COMMITTED INPUT\n')
     changed_head=commit(active)
     for i, arguments in enumerate(['changed', 'editorial check --against-upstream --format github'], start=5):
         output=root/f'outputs-{i}.txt';output.write_text('')

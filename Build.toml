@@ -1,13 +1,19 @@
 name = "ERCs"
 
+# `base-url` values are the working-group *staging* GitHub Pages locations
+# (planned, not yet deployed). They are not the live eips.ethereum.org or
+# ercs.ethereum.org sites, which build-eips keeps as the official public
+# fallback for proposals omitted from a build. This manifest never selects the
+# build-eips executable; CI pins that in .github/actions/build-eips/action.yml.
+
 [locations.ERCs]
-repository = "https://github.com/eips-wg/ERCs.git"
-base-url = "https://eips-wg.github.io/ERCs/"
+repository = "https://github.com/ritovision/ERCs-WG.git"
+base-url = "https://ritovision.github.io/ERCs-WG/"
 
 [locations.EIPs]
-repository = "https://github.com/eips-wg/EIPs.git"
-base-url = "https://eips-wg.github.io/EIPs/"
+repository = "https://github.com/ritovision/EIPs-WG.git"
+base-url = "https://ritovision.github.io/EIPs-WG/"
 
 [theme]
 repository = "https://github.com/ritovision/eips-wg-theme.git"
-commit = "b4b3b96af9a8068ef39b65653ef9e05c9eac35e4"
+commit = "d80a68a262a0ead56fc07a057cbf886c99ccf0dc"

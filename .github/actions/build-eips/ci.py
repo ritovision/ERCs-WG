@@ -52,9 +52,9 @@ def fresh_root(prefix: str) -> Path:
 def fetch_tool(repository: str, revision: str) -> Path:
     if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository) or any(
             part in ('.', '..') for part in repository.split('/')):
-        raise ValueError('preprocessor-repository must be a GitHub owner/repository')
+        raise ValueError('tool-repository must be a GitHub owner/repository')
     if not re.fullmatch(r'[0-9a-fA-F]{40}', revision):
-        raise ValueError('preprocessor-ref must be a complete immutable 40-hex commit, not latest/a branch/tag')
+        raise ValueError('tool-ref must be a complete immutable 40-hex commit, not latest/a branch/tag')
     source = fresh_root('build-eips-tool-') / 'source'
     command(['git', 'init', '--quiet', source])
     git(source, 'remote', 'add', 'origin', f'https://github.com/{repository}.git')

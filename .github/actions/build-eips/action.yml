@@ -5,14 +5,16 @@ inputs:
   args:
     description: Arguments for build, check, changed, or editorial (parsed without a shell)
     required: true
-  preprocessor-repository:
-    description: GitHub owner/repository containing the reviewed tool commit
-    # Exact correction candidate: publish approved tool/theme commits before
-    # merging the consumer rollout. Never fall back to releases/latest.
-    default: ritovision/eip-preprocessor
-  preprocessor-ref:
-    description: Complete immutable commit ID of the tool to build and execute
-    default: c763f390df49a754c5bacb04f0423ee7e78d1f85
+  # Trust anchor: the reviewed build-eips source is fixed here, in this
+  # trusted action, and never read from the user-editable Build.toml. Promote
+  # repository and ref together only after review. Never fall back to
+  # releases/latest, a branch, or a tag.
+  tool-repository:
+    description: GitHub owner/repository containing the reviewed build-eips commit
+    default: ritovision/build-eips
+  tool-ref:
+    description: Complete immutable commit ID of the build-eips source to build and execute
+    default: a506c2644b7f16863ae8d99061fd06d76428aea7
 
 outputs:
   stdout:
@@ -38,8 +40,8 @@ runs:
       id: source
       shell: bash
       env:
-        TOOL_REPOSITORY: ${{ inputs.preprocessor-repository }}
-        TOOL_REVISION: ${{ inputs.preprocessor-ref }}
+        TOOL_REPOSITORY: ${{ inputs.tool-repository }}
+        TOOL_REVISION: ${{ inputs.tool-ref }}
       run: |
         set -euo pipefail
         python3 "$GITHUB_ACTION_PATH/ci.py" fetch-tool \

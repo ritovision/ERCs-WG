@@ -2,6 +2,11 @@
 
 set -eu
 
+# No build-eips release has been published in ritovision/build-eips yet, so
+# release-binary installation stays disabled. Setting this to a reviewed
+# release's download URL belongs to the separate release rollout.
+BUILD_EIPS_RELEASE_BASE_URL=
+
 say() {
     printf '%s\n' "$*"
 }
@@ -284,6 +289,10 @@ ensure_install_dir() {
 }
 
 install_build_eips() {
+    if [ -z "$BUILD_EIPS_RELEASE_BASE_URL" ]; then
+        die "build-eips is not on PATH and no build-eips release has been published yet, so this script cannot download one. Install it from source with 'cargo install --locked --git https://github.com/ritovision/build-eips.git', make sure it is on PATH, then rerun this script."
+    fi
+
     case "$(uname -s)" in
         Linux)
             archive_name=build-eips-ubuntu.tar.xz
@@ -305,7 +314,7 @@ install_build_eips() {
 
     archive_path=$tmpdir/$archive_name
     sidecar_path=$tmpdir/$archive_name.sha256
-    release_base_url=https://github.com/eips-wg/preprocessor/releases/latest/download
+    release_base_url=$BUILD_EIPS_RELEASE_BASE_URL
 
     say "Installing build-eips from $release_base_url/$archive_name"
     download "$release_base_url/$archive_name" "$archive_path"

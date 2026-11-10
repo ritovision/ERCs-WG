@@ -4,13 +4,15 @@ This action no longer downloads `releases/latest` and invokes it in an uninitial
 
 ## Candidate revision and rollout decision
 
-The candidate now selects **`ritovision/eip-preprocessor` at `4db85eafaf8ce10cdbd73aa8c7f9284c75467b2d`**, containing the bounded R01–R06 corrections plus the G01 cross-platform path-collision guard, instead of the pre-correction audited tool. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `b4b3b96af9a8068ef39b65653ef9e05c9eac35e4`**, the already reviewed combination of both F06 optimizations. EIPs and ERCs use the same pair.
+The action's `tool-repository`/`tool-ref` defaults select **`ritovision/build-eips` at `a506c2644b7f16863ae8d99061fd06d76428aea7`**, the tested release-candidate source (bounded R01–R06 corrections, the G01 cross-platform path-collision guard, and the native Windows compatibility fixes). This trust anchor lives only in this trusted `action.yml`; the user-editable `Build.toml` never selects which executable is fetched. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `d80a68a262a0ead56fc07a057cbf886c99ccf0dc`**. EIPs and ERCs use the same pair.
 
-These are exact candidate selectors, **not a claim that the commits have already been pushed, independently approved, or exercised in hosted Actions**. Before merging this consumer rollout, publish/approve the selected tool and theme commits in the indicated repositories (or promote repository/ref pairs together to their reviewed canonical counterparts), then run hosted Actions/Pages acceptance. Do not merge a selector whose object is unavailable. A missing selected object fails closed; branches, tags, `latest`, and old-version fallbacks are not used.
+`Build.toml` `base-url` values (`https://ritovision.github.io/EIPs-WG/`, `https://ritovision.github.io/ERCs-WG/`) are planned working-group staging Pages locations, not yet deployed and not the live `eips.ethereum.org`/`ercs.ethereum.org` sites.
+
+These are exact candidate selectors, **not a claim that the commits have been independently approved or exercised in hosted Actions**. Before merging this consumer rollout, publish/approve the selected tool and theme commits in the indicated repositories (or promote repository/ref pairs together to their reviewed canonical counterparts), then run hosted Actions/Pages acceptance. Do not merge a selector whose object is unavailable. A missing selected object fails closed; branches, tags, `latest`, and old-version fallbacks are not used.
 
 The local selected-stack test reads these actual action/manifest selectors, fetches the exact tool commit, compiles its locked source, initializes the exact pinned theme and source/sibling heads, and runs both real full builds. Test-only URL rewrites point the declared remotes at local repositories; they do not edit project/global Git configuration and do not prove remote distribution or hosted permissions.
 
-Source-building is deliberate pre-release integration policy. Once an approved release exists, an independently reviewed checksum-verified immutable release installation path can replace it without changing the workspace contract.
+Source-building is deliberate pre-release integration policy; `ritovision/build-eips` has not published any release. Once an approved release exists, an independently reviewed checksum-verified immutable release installation path can replace it without changing the workspace contract.
 
 ## Execution contract
 

@@ -17,7 +17,7 @@ jobs:
   # Stores metadata about the pull request so that `post-ci.yml` can leave a
   # useful comment on the pull request.
   save-pr:
-    if: github.event.pull_request.base.repo.owner.login == 'ethereum' || github.event.pull_request.base.repo.owner.login == 'eips-wg'
+    if: github.event.pull_request.base.repo.owner.login == 'ethereum'
     name: Save Pull Request Metadata
     runs-on: ubuntu-latest
 
@@ -40,7 +40,7 @@ jobs:
           path: pr/
 
   check:
-    if: github.event.pull_request.base.repo.owner.login == 'ethereum' || github.event.pull_request.base.repo.owner.login == 'eips-wg'
+    if: github.event.pull_request.base.repo.owner.login == 'ethereum' || github.event.pull_request.base.repo.owner.login == 'ritovision'
     name: Check
     runs-on: ubuntu-latest
 
@@ -57,7 +57,7 @@ jobs:
           args: editorial check --against-upstream --format github
 
   markdownlint:
-    if: github.event.pull_request.base.repo.owner.login == 'ethereum' || github.event.pull_request.base.repo.owner.login == 'eips-wg'
+    if: github.event.pull_request.base.repo.owner.login == 'ethereum' || github.event.pull_request.base.repo.owner.login == 'ritovision'
     name: Markdown Linter
     runs-on: ubuntu-latest
     steps:

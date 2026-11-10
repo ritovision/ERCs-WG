@@ -47,7 +47,15 @@ Local workspace commands require these tools on `PATH`:
 * `build-eips`
 * Zola 0.22.1
 
-Git must be installed separately. The setup script locates or installs `build-eips` and Zola, adds locally installed tool directories to `PATH` for the current shell session, and prints guidance for making those `PATH` changes permanent.
+Git must be installed separately. The setup script uses an existing `build-eips` and locates or installs Zola, adds locally installed tool directories to `PATH` for the current shell session, and prints guidance for making those `PATH` changes permanent.
+
+No `build-eips` release has been published yet, so the setup script cannot download one. Install it from source before running setup:
+
+```sh
+cargo install --locked --git https://github.com/ritovision/build-eips.git
+```
+
+Release-binary installation will be enabled by a separate release rollout.
 
 ### Bootstrap The Workspace
 
@@ -212,7 +220,7 @@ Consider any document not published at <https://eips.ethereum.org/> as a working
 [^1]: <https://github.com/ethereum/EIPs/blob/master/.github/workflows/auto-review-bot.yml>
 [^2]: <https://github.com/ethereum/EIPs/blob/master/.github/workflows/ci.yml>
 
-[`build-eips`]: https://github.com/ethereum/build-eips
+[`build-eips`]: https://github.com/ritovision/build-eips
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [`eipw`]: https://github.com/ethereum/eipw
 [eip-review-bot]: https://github.com/ethereum/eip-review-bot/

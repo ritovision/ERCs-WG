@@ -42,15 +42,15 @@ def main():
     # Unmapped HTTP must fail on loopback rather than fetching a different stack.
     env.update(http_proxy='http://127.0.0.1:9',https_proxy='http://127.0.0.1:9',HTTP_PROXY='http://127.0.0.1:9',HTTPS_PROXY='http://127.0.0.1:9',NO_PROXY='')
     head=lambda p:execute(['git','-C',p,'rev-parse','HEAD'],capture=True)
-    tool_head=head(workspace/'preprocessor');theme_head=head(workspace/'theme')
+    tool_head=head(workspace/'build-eips');theme_head=head(workspace/'theme')
     selections={};mapping={}
     for repo in ('EIPs','ERCs'):
         source=workspace/repo;action=source/'.github/actions/build-eips'
         config=yaml.safe_load((action/'action.yml').read_text());manifest=tomllib.loads((source/'Build.toml').read_text())
-        tool_repo=config['inputs']['preprocessor-repository']['default'];tool_ref=config['inputs']['preprocessor-ref']['default']
+        tool_repo=config['inputs']['tool-repository']['default'];tool_ref=config['inputs']['tool-ref']['default']
         assert tool_ref==tool_head,(repo,tool_ref,tool_head)
         assert manifest['theme']['commit']==theme_head,(repo,manifest['theme']['commit'],theme_head)
-        mapping[f'https://github.com/{tool_repo}.git']=workspace/'preprocessor'
+        mapping[f'https://github.com/{tool_repo}.git']=workspace/'build-eips'
         mapping[manifest['theme']['repository']]=workspace/'theme'
         for name,location in manifest['locations'].items():mapping[location['repository']]=workspace/name
         selections[repo]={'source_head':head(source),'tool_repository':tool_repo,'tool_commit':tool_ref,'theme_repository':manifest['theme']['repository'],'theme_commit':theme_head,'publication_url':manifest['locations'][repo]['base-url']}
