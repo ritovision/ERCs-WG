@@ -14,7 +14,7 @@ inputs:
     default: ritovision/build-eips
   tool-ref:
     description: Complete immutable commit ID of the build-eips source to build and execute
-    default: a506c2644b7f16863ae8d99061fd06d76428aea7
+    default: 08fcfab1b48ab68486e60fbc3a7e661b30ab2288
 
 outputs:
   stdout:

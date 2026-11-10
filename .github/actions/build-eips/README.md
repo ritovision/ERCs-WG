@@ -4,7 +4,7 @@ This action no longer downloads `releases/latest` and invokes it in an uninitial
 
 ## Candidate revision and rollout decision
 
-The action's `tool-repository`/`tool-ref` defaults select **`ritovision/build-eips` at `a506c2644b7f16863ae8d99061fd06d76428aea7`**, the tested release-candidate source (bounded R01–R06 corrections, the G01 cross-platform path-collision guard, and the native Windows compatibility fixes). This trust anchor lives only in this trusted `action.yml`; the user-editable `Build.toml` never selects which executable is fetched. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `d80a68a262a0ead56fc07a057cbf886c99ccf0dc`**. EIPs and ERCs use the same pair.
+The action's `tool-repository`/`tool-ref` defaults select **`ritovision/build-eips` at `08fcfab1b48ab68486e60fbc3a7e661b30ab2288`**, the tested release-candidate source (bounded R01–R06 corrections, the G01 cross-platform path-collision guard, and the native Windows compatibility fixes). This trust anchor lives only in this trusted `action.yml`; the user-editable `Build.toml` never selects which executable is fetched. The committed `Build.toml` selects **`ritovision/eips-wg-theme` at `d80a68a262a0ead56fc07a057cbf886c99ccf0dc`**. EIPs and ERCs use the same pair.
 
 `Build.toml` `base-url` values (`https://ritovision.github.io/EIPs-WG/`, `https://ritovision.github.io/ERCs-WG/`) are planned working-group staging Pages locations, not yet deployed and not the live `eips.ethereum.org`/`ercs.ethereum.org` sites.
 
