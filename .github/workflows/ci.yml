@@ -1,6 +1,8 @@
 name: Continuous Integration
 
 on:
+  push:
+    branches: [main]
   pull_request:
     types:
       - opened
@@ -14,6 +16,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Push validation is independent of PR-only editorial diff reporting.
+  # The executable and theme are pinned in the trusted Action/Build.toml.
+  build-main:
+    if: github.event_name == 'push' && (github.repository_owner == 'ritovision' || github.repository_owner == 'ethereum')
+    name: Build (main)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build exact proposal stack
+        uses: ./.github/actions/build-eips
+        with:
+          args: build
+
   # Stores metadata about the pull request so that `post-ci.yml` can leave a
   # useful comment on the pull request.
   save-pr:
